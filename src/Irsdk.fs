@@ -2,7 +2,7 @@
 
 open FSharp.Data
 
-///<summary>comment</summary>
+///<summary>F# implementation of the iRacing SDK.</summary>
 module IrsdkFS =
 
     ///<summary>Returns the simStatus in string format</summary>
