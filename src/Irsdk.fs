@@ -39,8 +39,7 @@ module IrsdkFS =
         SessionStringLength= 0x20000 }
 
 
-
-    //144 bytes
+    ///<summary>This type calculates the size of the header in memory. Equals 144 bytes.</summary>
     [<type:StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)>]
     type VarHeader =
         struct
@@ -51,7 +50,7 @@ module IrsdkFS =
             //offset = 8
             val mutable count: int;
             [<MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)>]
-            val mutable pad: int List;
+            val mutable pad: int [];
 
             //32 bytes: offset = 16
             [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>]
@@ -77,7 +76,7 @@ module IrsdkFS =
     let Start() =
         let iRacingFile = MemoryMappedFile.OpenExisting(defines.MemoryMapFileName)
         let fileMapView = iRacingFile.CreateViewAccessor()
-        //let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
-        //varHeaderSize
-        fileMapView
+        let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
+        varHeaderSize
+        //fileMapView
         
