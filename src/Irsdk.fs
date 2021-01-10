@@ -2,6 +2,7 @@
 open FSharp.Data
 open System.IO.MemoryMappedFiles
 open System.Runtime.InteropServices
+open System.Collections
 
 ///<summary>F# implementation of the iRacing SDK.</summary>
 module IrsdkFS =
@@ -37,7 +38,7 @@ module IrsdkFS =
         StatusConnected= 1;
         SessionStringLength= 0x20000 }
 
-    let 
+
 
     //144 bytes
     [<type:StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)>]
@@ -64,7 +65,7 @@ module IrsdkFS =
        end
 
     ///<summary>Returns the current state of the sim</summary>
-    let SimStatus() =
+    let simStatus() =
         let simStatusURL = "http://127.0.0.1:32034/get_sim_status?object=simStatus"
         let simStatusObject = Http.RequestString(simStatusURL)
         match simStatusObject with
@@ -73,18 +74,10 @@ module IrsdkFS =
         | _ -> false
 
     ///<summary>Loads the iRacing memory map file if it is present on disk.</summary>
-    let loadMemoryMap() =
+    let Start() =
         let iRacingFile = MemoryMappedFile.OpenExisting(defines.MemoryMapFileName)
-        iRacingFile
-        
-                
-    ///<summary>Create the filemap to be read.</summary>
-    /// <param name="iRacingFile">The iRacing memory map file.</param>
-    let CreateFileMap(iRacingFile: MemoryMappedFile) =
         let fileMapView = iRacingFile.CreateViewAccessor()
-        let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
-        varHeaderSize
-
-  //  let private checkSimStatus = 
-    //    if SimStatus() = false then Failure "Startup error. Please make sure that iRacing is running"
-    //    else CreateFileMap(loadMemoryMap())
+        //let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
+        //varHeaderSize
+        fileMapView
+        
