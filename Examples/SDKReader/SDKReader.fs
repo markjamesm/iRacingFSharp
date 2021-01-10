@@ -5,5 +5,6 @@ open IrsdkFS
 [<EntryPoint>]
 let main argv =
     let test = IrsdkFS.SimStatus()
-    printf "%s" test
+    //let testTwo = SimStatusTwo.mySimStatus
+    printf "%A" test
     0 // return an integer exit code
