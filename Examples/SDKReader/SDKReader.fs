@@ -5,6 +5,8 @@ open IrsdkFS
 [<EntryPoint>]
 let main argv =
     let test = IrsdkFS.SimStatus()
+    let connection = IrsdkFS.CreateFileMap(IrsdkFS.loadMemoryMap())
     //let testTwo = SimStatusTwo.mySimStatus
-    printf "%A" test
+    printfn "%A" test
+    printfn "%A" connection
     0 // return an integer exit code
