@@ -1,32 +1,16 @@
 ﻿namespace IrsdkFS
+
 open FSharp.Data
 open System.IO.MemoryMappedFiles
 open System.Runtime.InteropServices
-open System.Collections
+open System
+open System.Threading
 
 ///<summary>F# implementation of the iRacing SDK.</summary>
 module IrsdkFS =
 
-    type Defines = 
-        { DesiredAccess: int
-          DataValidEventName: string
-          MemoryMapFileName: string
-          BroadcastMessageName: string
-          PadCarNumName: string
-          MaxString: int 
-          MaxDesc: int 
-          MaxVars: int 
-          MaxBufs: int 
-          StatusConnected: int 
-          SessionStringLength: int 
-        }
-
-    type Result<'TSuccess,'TFailure> = 
-        | Success of 'TSuccess
-        | Failure of 'TFailure
-
-    let defines =
-        { DesiredAccess= 2031619;
+    let connectionParameters : ConnectionParameters =
+        { DesiredAccess= 2031619u;
         DataValidEventName= "Local\\IRSDKDataValidEvent";
         MemoryMapFileName= "Local\\IRSDKMemMapFileName";
         BroadcastMessageName= "IRSDK_BROADCASTMSG";
@@ -38,45 +22,34 @@ module IrsdkFS =
         StatusConnected= 1;
         SessionStringLength= 0x20000 }
 
-
-    ///<summary>This type calculates the size of the header in memory. Equals 144 bytes.</summary>
-    [<type:StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)>]
-    type VarHeader =
-        struct
-            //16 bytes: offset = 0
-            val mutable typeOf: int;
-            //offset = 4
-            val mutable offset: int;
-            //offset = 8
-            val mutable count: int;
-            [<MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)>]
-            val mutable pad: int [];
-
-            //32 bytes: offset = 16
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>]
-            val mutable name: string;
-            //64 bytes: offset = 48
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)>]
-            val mutable desc: string;
-            //32 bytes: offset = 112
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>]
-            val mutable unit: string;
-       end
-
     ///<summary>Returns the current state of the sim</summary>
     let simStatus() =
         let simStatusURL = "http://127.0.0.1:32034/get_sim_status?object=simStatus"
         let simStatusObject = Http.RequestString(simStatusURL)
+
         match simStatusObject with
         | simStatusObject when simStatusObject.Contains("running:0") -> false
         | simStatusObject when simStatusObject.Contains("running:1") -> true
         | _ -> false
 
+    [<DllImport("Kernel32.dll", CharSet = CharSet.Auto)>]
+    extern IntPtr OpenEvent(UInt32 dwDesiredAccess, Boolean bInheritHandle, String lpName);
+
     ///<summary>Loads the iRacing memory map file if it is present on disk.</summary>
     let Start() =
-        let iRacingFile = MemoryMappedFile.OpenExisting(defines.MemoryMapFileName)
+        let iRacingFile = MemoryMappedFile.OpenExisting(connectionParameters.MemoryMapFileName)
         let fileMapView = iRacingFile.CreateViewAccessor()
         let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
-        varHeaderSize
-        //fileMapView
+        let version = fileMapView.ReadInt32(16L)
+
+        let hEvent = OpenEvent(connectionParameters.DesiredAccess, false, connectionParameters.DataValidEventName)
+     //   let are = new AutoResetEvent(false)
+     //   let 
+
+        //let wh = new WaitHandle
+        
+
+
+        //varHeaderSize
+        hEvent
         
