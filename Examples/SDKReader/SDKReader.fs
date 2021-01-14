@@ -12,6 +12,6 @@ let main argv =
     let irsdkTest = IrsdkFS.start()
     let status = simStatus(IrsdkFS.simStatus())
 
-    printfn "%s" status
+    printfn "\n%s" status
     printfn "Header version: %A" irsdkTest
     0 // return an integer exit code
