@@ -4,7 +4,14 @@ open IrsdkFS
 
 [<EntryPoint>]
 let main argv =
-    let test = IrsdkFS.Start()
-    //let testTwo = SimStatusTwo.mySimStatus
-    printfn "%A" test
+    let simStatus iRacingStatus = 
+        match iRacingStatus with
+        | true -> "iRacing is running."
+        | false -> "iRacing is not running."
+
+    let irsdkTest = IrsdkFS.start()
+    let status = simStatus(IrsdkFS.simStatus())
+
+    printfn "%s" status
+    printfn "Header version: %A" irsdkTest
     0 // return an integer exit code

@@ -4,6 +4,7 @@ open System.Runtime.InteropServices
 
 [<AutoOpen>]
 module Types =
+
     type ConnectionParameters = 
         { DesiredAccess: uint32
           DataValidEventName: string
@@ -17,6 +18,8 @@ module Types =
           StatusConnected: int 
           SessionStringLength: int 
         }
+
+    type SimStatusURL = {URL: string}
 
     ///<summary>This type calculates the size of the header in memory. Equals 144 bytes.</summary>
     [<type:StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)>]
@@ -86,6 +89,7 @@ module Types =
             val mutable varbuf: VarBuf; 
         end
 
+    // This class is incomplete.
     type IrsdkHeaderExtensions() = 
         
         let hasChangedSinceReading(header: IrsdkHeader)(buf: VarBufWithIndex) =
@@ -95,5 +99,4 @@ module Types =
         let FindLatestBuf(header: IrsdkHeader)(requestedTickCount: int) =
             let maxbuf = new VarBuf()
             let maxIndex = -1
-
-    // This class is incomplete.
+            maxIndex
