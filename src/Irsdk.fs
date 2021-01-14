@@ -8,6 +8,10 @@ open System
 ///<summary>F# implementation of the iRacing SDK.</summary>
 module IrsdkFS =
 
+    type Outcome =
+        | OK of filename:MemoryMappedFile
+        | Failed of filename:string
+
     let connectionParameters : ConnectionParameters =
         { DesiredAccess= 2031619u;
         DataValidEventName= "Local\\IRSDKDataValidEvent";
@@ -33,26 +37,22 @@ module IrsdkFS =
     [<DllImport("Kernel32.dll", CharSet = CharSet.Auto)>]
     extern IntPtr OpenEvent(UInt32 dwDesiredAccess, Boolean bInheritHandle, String lpName);
 
+    let loadMemoryMap (iRacingMemoryMap: MemoryMappedFile) =
+        let fileMapView = iRacingMemoryMap.CreateViewAccessor()
+        //let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
+        //let version = fileMapView.ReadInt32(16L)
+        //version
+        fileMapView
+       
+    let createMemoryMappedFile =
+        try
+            let iRacingMemoryMap = MemoryMappedFile.OpenExisting(connectionParameters.MemoryMapFileName) 
+            Some(iRacingMemoryMap)
+        with
+            | ex -> eprintf "Error: %s" ex.Message 
+                    None
+
     ///<summary>Loads the iRacing memory map file if it is present on disk.</summary>
-    let start() =
-
-        let fileMapVersion (iRacingMemoryMap: MemoryMappedFile) =
-            let fileMapView = iRacingMemoryMap.CreateViewAccessor()
-            //let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
-            let version = fileMapView.ReadInt32(16L)
-            version
-
-        let openMemoryMappedFile (iRacingMemoryMap: MemoryMappedFile option) =
-            match iRacingMemoryMap with
-            | Some iRacingMemoryMap -> fileMapVersion iRacingMemoryMap
-            | None -> 0
-           
-        let createMemoryMappedFile =
-            try
-                let iRacingMemoryMap = MemoryMappedFile.OpenExisting(connectionParameters.MemoryMapFileName) 
-                Some(iRacingMemoryMap)
-            with
-                | ex -> eprintf "Error: %s" ex.Message 
-                        None
-
-        openMemoryMappedFile createMemoryMappedFile
+    let start () =
+        createMemoryMappedFile
+        |> Option.map loadMemoryMap
