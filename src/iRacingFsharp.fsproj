@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Event.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Irsdk.fs" />
   </ItemGroup>

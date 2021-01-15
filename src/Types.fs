@@ -35,13 +35,13 @@ module Types =
             val mutable pad: int [];
 
             //32 bytes: offset = 16
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>]
+            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>] //MaxString
             val mutable name: string;
             //64 bytes: offset = 48
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)>]
+            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)>] // MaxDesc
             val mutable desc: string;
             //32 bytes: offset = 112
-            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>]
+            [<MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)>] // MaxString
             val mutable unit: string;
        end
 
@@ -90,7 +90,7 @@ module Types =
         end
 
     // This class is incomplete.
-    type IrsdkHeaderExtensions() = 
+    type IrsdkHeaderExtensions () = 
         
         let hasChangedSinceReading(header: IrsdkHeader)(buf: VarBufWithIndex) =
             let changed = header.varbuf.tickCount <> buf.tickCount

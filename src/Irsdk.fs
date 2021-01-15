@@ -2,8 +2,6 @@
 
 open FSharp.Data
 open System.IO.MemoryMappedFiles
-open System.Runtime.InteropServices
-open System
 
 ///<summary>F# implementation of the iRacing SDK.</summary>
 module IrsdkFS =
@@ -34,17 +32,13 @@ module IrsdkFS =
         | simStatusObject when simStatusObject.Contains("running:1") -> true
         | _ -> false
 
-    [<DllImport("Kernel32.dll", CharSet = CharSet.Auto)>]
-    extern IntPtr OpenEvent(UInt32 dwDesiredAccess, Boolean bInheritHandle, String lpName);
+   // let private Create
 
-    let loadMemoryMap (iRacingMemoryMap: MemoryMappedFile) =
-        let fileMapView = iRacingMemoryMap.CreateViewAccessor()
-        //let varHeaderSize  = Marshal.SizeOf(typeof<VarHeader>)
-        //let version = fileMapView.ReadInt32(16L)
-        //version
-        fileMapView
-       
-    let createMemoryMappedFile =
+    let private loadMemoryMap (memoryMappedFile: MemoryMappedFile) =
+        let iRacingMemoryMapAccessor = memoryMappedFile.CreateViewAccessor(0L, 12L)
+        iRacingMemoryMapAccessor
+        
+    let private openMemoryMappedFile =
         try
             let iRacingMemoryMap = MemoryMappedFile.OpenExisting(connectionParameters.MemoryMapFileName) 
             Some(iRacingMemoryMap)
@@ -54,5 +48,5 @@ module IrsdkFS =
 
     ///<summary>Loads the iRacing memory map file if it is present on disk.</summary>
     let start () =
-        createMemoryMappedFile
+        openMemoryMappedFile
         |> Option.map loadMemoryMap
